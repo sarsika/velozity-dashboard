@@ -133,7 +133,7 @@ The project includes sample data for testing different roles and features:
 git clone <your-repository-url>
 cd <project-folder>
 npm install
-npm run dev
+npm run dev.
 
 
 ## 📌 Key Highlights
