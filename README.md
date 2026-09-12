@@ -4,7 +4,7 @@ A full-stack client project dashboard built with role-based access, task managem
 
 ## 🌐 Live Application
 
-[Open Live Application](https://velozity-dashboard-xi.vercel.app/login)
+(https://velozity-dashboard-xi.vercel.app/login)
 
 ## ✨ Features
 
@@ -100,7 +100,7 @@ Foreign keys and indexes are used to maintain relationships and improve database
 
 <img width="1536" height="1024" alt="Login Page" src="https://github.com/user-attachments/assets/3d2b4e93-fddd-4202-93aa-1682635eff79" />
 
-*Add more screenshots here to showcase the Admin Dashboard, Project Manager Dashboard, Developer Dashboard, Activity Feed, and Notifications.*
+
 
 ## 🧠 Hardest Part
 
