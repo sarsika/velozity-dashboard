@@ -99,7 +99,7 @@ not added speculatively):
 - Socket reconnect after a dropped connection re-fetches the catch-up
   feed but doesn't re-show a "reconnecting..." indicator in the UI.
 
-## Explanation (for the submission form)
+## Explanation 
 
 The hardest part was the real-time, role-filtered activity feed. A single
 `io.emit()` broadcast would leak cross-project data to everyone connected,
