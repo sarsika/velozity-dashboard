@@ -129,7 +129,6 @@ The project includes sample data for testing different roles and features:
 
 ## ▶️ Run Locally
 
-```bash
 git clone <your-repository-url>
 cd <project-folder>
 npm install
