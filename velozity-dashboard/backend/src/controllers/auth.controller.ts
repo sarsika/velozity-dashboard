@@ -16,13 +16,11 @@ const loginSchema = z.object({
 
 const isProd = process.env.NODE_ENV === "production";
 
-// Refresh token goes in an HttpOnly cookie so JS on the page can never
-// read it - that's the whole point of keeping it out of localStorage.
 function setRefreshCookie(res: Response, token: string) {
   res.cookie("refreshToken", token, {
     httpOnly: true,
     secure: isProd,
-    sameSite: "lax",
+    sameSite: isProd ? "none" : "lax",
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     path: "/api/auth",
   });
