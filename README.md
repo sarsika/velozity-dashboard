@@ -135,6 +135,7 @@ cd <project-folder>
 npm install
 npm run dev
 
+
 ## 📌 Key Highlights
 
 This project demonstrates practical experience in:
@@ -150,5 +151,5 @@ Background jobs
 API validation and error handling
 Deployment
 
-## 👩‍💻 Author
+## 👩💻 Author
 Sarsika Sri K
