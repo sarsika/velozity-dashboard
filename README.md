@@ -145,7 +145,7 @@ npm install
 npm run dev
 ```
 
-Configure the required environment variables and Neon PostgreSQL database before running the application.
+
 
 ## 📌 Key Highlights
 
