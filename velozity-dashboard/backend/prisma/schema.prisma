@@ -1,0 +1,127 @@
+// Prisma schema for the client project dashboard.
+// Relational design on purpose (not Mongo) because tasks, projects, users
+// and activity logs all have clear foreign-key relationships and we need
+// joins/filters that are painful in a document DB.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  PROJECT_MANAGER
+  DEVELOPER
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  IN_REVIEW
+  DONE
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role
+  createdAt    DateTime @default(now())
+
+  // Projects this user created (only relevant for PM/Admin)
+  createdProjects Project[]      @relation("ProjectCreator")
+  assignedTasks   Task[]         @relation("TaskAssignee")
+  activityLogs    ActivityLog[]
+  notifications   Notification[]
+
+  @@index([role])
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  name        String
+  clientName  String
+  createdById String
+  createdBy   User     @relation("ProjectCreator", fields: [createdById], references: [id])
+  createdAt   DateTime @default(now())
+
+  tasks         Task[]
+  activityLogs  ActivityLog[]
+
+  // A PM only sees/manages projects they created - this index makes that
+  // lookup fast since it's the single most common query for PM dashboards.
+  @@index([createdById])
+}
+
+model Task {
+  id          String     @id @default(uuid())
+  projectId   String
+  project     Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  title       String
+  description String?
+  assignedToId String?
+  assignedTo  User?      @relation("TaskAssignee", fields: [assignedToId], references: [id])
+  status      TaskStatus @default(TODO)
+  priority    Priority   @default(MEDIUM)
+  dueDate     DateTime?
+  isOverdue   Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  activityLogs ActivityLog[]
+  notifications Notification[]
+
+  // These four are the columns every dashboard filters/sorts by, so each
+  // gets its own index. projectId+status together covers "tasks for
+  // project X with status Y" without a full table scan.
+  @@index([projectId, status])
+  @@index([assignedToId])
+  @@index([status])
+  @@index([priority])
+  @@index([dueDate])
+}
+
+// Every status change is written here with a timestamp + who did it.
+// This is the source of truth for the activity feed - it is NOT derived
+// from Task rows, because Task only holds the *current* status.
+model ActivityLog {
+  id         String   @id @default(uuid())
+  taskId     String
+  task       Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  projectId  String
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  fromStatus TaskStatus?
+  toStatus   TaskStatus
+  createdAt  DateTime @default(now())
+
+  // Feed queries are always "latest N for project X" or "latest N overall"
+  @@index([projectId, createdAt])
+  @@index([createdAt])
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  taskId    String?
+  task      Task?    @relation(fields: [taskId], references: [id])
+  message   String
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId, isRead])
+}
