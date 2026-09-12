@@ -166,4 +166,3 @@ This project demonstrates practical experience in:
 
 **Sarsika Sri K**
 
-B.E. Electrical and Electronics Engineering — 2026
